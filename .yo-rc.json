@@ -1,0 +1,11 @@
+{
+  "generator-hapi-rest": {
+    "appRAML": true,
+    "appTesting": true,
+    "appHealth": true,
+    "appAuth": false,
+    "appName": "node-training",
+    "appPrefix": "",
+    "appRepo": "git@gitlab.digitalservices.es:kst/https://github.com/beeva-alvarodelaserna/node-training.git"
+  }
+}

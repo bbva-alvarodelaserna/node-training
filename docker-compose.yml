@@ -1,0 +1,17 @@
+node-training:
+  container_name: node-training
+  command: "node-training/loc"
+  image: "dev.docker.kickstartteam.es:5000/kst/framework/node-training:0.0.1
+  links:
+    - mongo
+  ports:
+    - "9000:9000"
+  environment:
+    CONSUL: dev.consul.kickstartteam.es:8500
+
+mongo:
+  container_name: genesis-mongo
+  command: '--smallfiles --dbpath=/tmp'
+  ports:
+    - "27017:27017"
+  image: dev.docker.kickstartteam.es:5000/kst/mongo:latest

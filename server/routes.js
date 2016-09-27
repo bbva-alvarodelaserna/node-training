@@ -1,0 +1,22 @@
+/**
+ * Main application routes
+ */
+
+'use strict';
+
+exports.register = function(server, options, next) {
+  
+  /* Required API endpoints */
+  
+  require('./api/health')(server);
+  
+
+  /* routesinject */
+
+  next();
+};
+
+exports.register.attributes = {
+  name: 'node-training-routes',
+  version: '0.0.1'
+};
