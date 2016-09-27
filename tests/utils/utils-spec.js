@@ -1,21 +1,23 @@
-var rewire = require("rewire");
+'use strict';
+
+const rewire = require('rewire');
 
 describe('Utils functions', function () {
 
-	var utils = rewire('../../server/components/utils.js');
-  var GlobalModuleMock;
-	beforeEach(function() {
-
+	let utils = rewire('../../server/components/utils.js');
+  let GlobalModuleMock;
+	
+  beforeEach(() => {
+    utils = rewire('../../server/components/utils.js');
     GlobalModuleMock = {
-      getConfigValue: {}
+      getConfigValue: jasmine.createSpy('getConfigValue')
     };
-    utils.__set__('GlobalModule', GlobalModuleMock);
-
+    utils.__set__('GlobalModule.getConfigValue', GlobalModuleMock.getConfigValue);
   });
 
 	it('getCollection: should call GlobalModule with the right parameters', function () {
-    var coll = jasmine.createSpy('coll');
-    spyOn(GlobalModuleMock, 'getConfigValue').and.callFake(function () {
+    let coll = jasmine.createSpy('coll');
+    GlobalModuleMock.getConfigValue.and.callFake(function () {
       return {
         collection: coll
       }
@@ -31,18 +33,18 @@ describe('Utils functions', function () {
   });
 
   it('generateToken: should return a valid Token', function () {
-		var token = utils.generateToken(12);
+		let token = utils.generateToken(12);
 		expect(typeof token).toBe('string');
 		expect(token.length).toBeGreaterThan(0);
   });
 
   it('logData: should return a valid logData response', function () {
-		var reqData = {
+		let reqData = {
 			method: 'TEST',
 			path: 'TEST/PATH',
 			testData: 'NOT SHOW'
 		};
-		var resultData = utils.logData(reqData);
+		let resultData = utils.logData(reqData);
 		expect(typeof resultData).toBe('object');
 		expect(resultData.method).toEqual(reqData.method);
 		expect(resultData.path).toEqual(reqData.path);
@@ -52,8 +54,8 @@ describe('Utils functions', function () {
 
   describe('createResponseData function', function () {
     it('createResponseData: should return a response data', function () {
-      var resultData = utils.createResponseData('test', 'me');
-      var expectedResult = {
+      let resultData = utils.createResponseData('test', 'me');
+      let expectedResult = {
         result: 'test',
         data: 'me'
       };
@@ -62,8 +64,8 @@ describe('Utils functions', function () {
     });
 
     it('createResponseData: should return a response data without data', function () {
-      var resultData = utils.createResponseData('test');
-      var expectedResult = {
+      let resultData = utils.createResponseData('test');
+      let expectedResult = {
         result: 'test'
       };
       expect(typeof resultData).toBe('object');
@@ -78,8 +80,8 @@ describe('Utils functions', function () {
     });
 
     it('encryptText and then decryptText on a value should return the same value', function () {
-      var textToEncrypt = 'testEncryption';
-      var encripted = utils.encryptText(textToEncrypt);
+      let textToEncrypt = 'testEncryption';
+      let encripted = utils.encryptText(textToEncrypt);
 
       expect(utils.decryptText(encripted)).toBe(textToEncrypt);
     });
@@ -87,16 +89,16 @@ describe('Utils functions', function () {
 
   describe('validateSchema function', function () {
     it('validateSchema to call Joi.validate with the correct parameters', function () {
-      var validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
+      let validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
         callback(undefined);
       });
-      var joiSpy = {
+      let joiSpy = {
         validate: validateSpy
       };
 
-      utils.__set__('Joi', joiSpy);
+      utils.__set__('Joi.validate', joiSpy.validate);
 
-      var data = {
+      let data = {
         payload: {},
         schema: {}
       };
@@ -107,23 +109,23 @@ describe('Utils functions', function () {
     });
 
     it('validateSchema to return an error if callback from Joi.validate is invalid', function (done) {
-      var errorObject = {
+      let errorObject = {
         details: [
           {
             message: 'testError'
           }
         ]
       };
-      var validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
+      let validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
         callback(errorObject);
       });
-      var joiSpy = {
+      let joiSpy = {
         validate: validateSpy
       };
 
-      utils.__set__('Joi', joiSpy);
+      utils.__set__('Joi.validate', joiSpy.validate);
 
-      var data = {
+      let data = {
         payload: {},
         schema: {}
       };
@@ -136,16 +138,16 @@ describe('Utils functions', function () {
     });
 
     it('validateSchema to return a valid response if Joi.validate is valid', function () {
-      var validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
+      let validateSpy = jasmine.createSpy('validateSpy').and.callFake(function (payload, schema, callback) {
         callback(undefined);
       });
-      var joiSpy = {
+      let joiSpy = {
         validate: validateSpy
       };
 
-      utils.__set__('Joi', joiSpy);
+      utils.__set__('Joi.validate', joiSpy.validate);
 
-      var data = {
+      let data = {
         payload: {},
         schema: {}
       };
@@ -160,7 +162,7 @@ describe('Utils functions', function () {
   });
 
   describe('Send request function', function () {
-    var data;
+    let data, body, mockResponse, requestMock;
 
     beforeEach(function() {
       data = {
@@ -169,174 +171,32 @@ describe('Utils functions', function () {
           url: 'TEST'
         }
       };
+      requestMock = jasmine.createSpy('reqSpy');
+      utils.__set__('req', requestMock);
+      spyOn(utils, 'log');
     });
 
     it('should call the req library with the correct parameters', function () {
-      var reqSpy = jasmine.createSpy('reqSpy');
-      utils.__set__('req', reqSpy);
-      spyOn(utils, 'log');
       utils.sendRequest(data);
 
-      expect(reqSpy).toHaveBeenCalled();
+      expect(requestMock).toHaveBeenCalled();
       expect(1).toBe(1);
-      expect(reqSpy.calls.argsFor(0)[0]).toEqual(data.reqData);
+      expect(requestMock.calls.argsFor(0)[0]).toEqual(data.reqData);
     });
 
-    describe('async passing tests getting a string', function () {
-      var body;
-      beforeEach(function(done) {
-        var reqSpy = jasmine.createSpy('reqSpy').and.callFake(function (data, callback) {
-          callback(undefined, {}, '{ "myObject": "test" }');
-        });
-        utils.__set__('req', reqSpy);
-        spyOn(utils, 'log');
-        utils.sendRequest(data)
-          .then((response) => {
-            body = response.reqData.body;
-            done();
-          })
-          .catch((err) => {
-            done.fail('Promise should be resolved');
-          });
+    it ('should return an empty object if request fails', function (done) {
+      requestMock.and.callFake(function (data, callback) {
+        callback(undefined, {}, 'BadResponseString');
       });
-
-      it('should parse the body to an object if it is a string', function () {
-        expect(body).toEqual(jasmine.any(Object));
-      });
-
-      it('should have called the log function twice', function () {
-        expect(utils.log.calls.count()).toBe(2);
-      });
-    });
-
-    describe('async passing tests getting an object', function () {
-      var body;
-      beforeEach(function(done) {
-        var reqSpy = jasmine.createSpy('reqSpy').and.callFake(function (data, callback) {
-          callback(undefined, {}, { myObject: 'test' });
-        });
-        utils.__set__('req', reqSpy);
-        spyOn(utils, 'log');
-        utils.sendRequest(data)
-          .then((response) => {
-            body = response.reqData.body;
-            done();
-          })
-          .catch((err) => {
-            done.fail('Promise should be resolved');
-          });
-      });
-
-      it('should return the body as is', function () {
-        expect(body).toEqual(jasmine.any(Object));
-      });
-    });
-
-    describe('async failing tests', function () {
-      var err;
-      beforeEach(function(done) {
-        var reqSpy = jasmine.createSpy('reqSpy').and.callFake(function (data, callback) {
-          callback(true, {}, '{ "myObject": "test" }');
-        });
-        utils.__set__('req', reqSpy);
-        spyOn(utils, 'log');
-        utils.sendRequest(data)
-          .then((response) => {
-            done.fail('Promise should NOT be resolved');
-          })
-          .catch((error) => {
-            err = error;
-            done();
-          });
-      });
-      it('should have called the log function twice', function () {
-        expect(utils.log.calls.count()).toBe(2);
-      });
-      it('should return an error', function () {
-        expect(err).toBeTruthy();
-      });
-    });
-
-    describe('wrong response tests', function () {
-      var body;
-
-      beforeEach(function(done) {
-        var reqSpy = jasmine.createSpy('reqSpy').and.callFake(function (data, callback) {
-          callback(undefined, {}, 'BadResponseString');
-        });
-        utils.__set__('req', reqSpy);
-        spyOn(utils, 'log');
-        utils.sendRequest(data)
-          .then((response) => {
-            body = response.reqData.body;
-            done();
-          })
-          .catch((err) => {
-            done.fail('Promise should be resolved');
-          });
-      });
-
-      it('should return an empty body object', function() {
+      utils.sendRequest(data)
+      .then((response) => {
+        body = response.reqData.body;
         expect(body).toEqual({});
+        done();
+      })
+      .catch((err) => {
+        done.fail('Promise should be resolved');
       });
-    });
-
+    })
   });
-
-  describe('log function', function () {
-    // TODO Test this function properly
-    var wMock, wSpy;
-    beforeEach(function () {
-      wSpy = jasmine.createSpy('wSpy');
-      wMock = {
-        test: wSpy
-      };
-      utils.__set__('w', wMock);
-    });
-
-    it('shoul call w', function () {
-      utils.log('test', '', 'test call', {});
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-    it('shoul call w when data is number', function () {
-      utils.log('test', 123, 'test call', {});
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-    it('shoul call w when data is number without description', function () {
-      utils.log('test', 123);
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-    it('shoul call w when general data is an object with uuid', function () {
-      var data = {
-        method: 'test',
-        path: 'testPath',
-        uuid: 'test-123'
-      };
-      utils.log('test', data, 'test call', {});
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-    it('shoul call w when general data is an object without uuid', function () {
-      var data = {
-        method: 'test',
-        path: 'testPath'
-      };
-      utils.log('test', data, 'test call', {});
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-    it('shoul call w when general data is an object without description', function () {
-      var data = {
-        method: 'test',
-        path: 'testPath'
-      };
-      utils.log('test', data);
-      expect(wSpy).toHaveBeenCalled();
-    });
-
-  });
-
 });

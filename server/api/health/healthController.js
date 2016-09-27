@@ -1,16 +1,17 @@
 'use strict';
 
-var Utils           = require('../../components/utils');
-var log             = Utils.log;
+const Utils           = require('../../components/utils');
+let log             = Utils.log;
+const GlobalModule    = require('../../components/global');
 
-var USERS_NAME_COLLECTION = 'users';
+const USERS_NAME_COLLECTION = 'users';
 
 exports.healthCheck = function(request, reply) {
-  var logData = Utils.logData(request);
+  let logData = Utils.logData(request);
   log('info', logData, 'healthCheck', request.payload);
-  var colUser = Utils.getCollection(USERS_NAME_COLLECTION);
+  let colUser = GlobalModule.getConfigValue('db').collection(USERS_NAME_COLLECTION);
 
-  colUser.findOne({}, {}, function(err){
+  colUser.findOne({}, {}, function (err) {
     if (err) {
       log('error', logData, 'healthCheck DDBB KO');
       return reply({'status': 'KO'}).code(500);

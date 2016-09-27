@@ -1,6 +1,6 @@
 'use strict';
 
-var config = {};
+const config = {};
 
 exports.getConfigValue = function(param) {
   return config[param];

@@ -9,7 +9,7 @@ var all = {
   host: process.env._IP || 'localhost',
   appName: 'node-training',
   routes: {
-    prefix: '/v1/node-training'
+    prefix: '/v1'
   },
   salt: 'node-trainings4ltv4lu3'
 };

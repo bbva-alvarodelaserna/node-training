@@ -1,6 +1,6 @@
 'use strict';
 
-var Health = require('./healthController');
+const Health = require('./healthController');
 
 module.exports = function(server) {
 
@@ -11,9 +11,7 @@ module.exports = function(server) {
       auth: false,
       tags: ['api', 'health'],
     },
-    handler: function(request, reply, next) {
-      Health.healthCheck(request, reply, next);
-    }
+    handler: Health.healthCheck
   });
 
 };
