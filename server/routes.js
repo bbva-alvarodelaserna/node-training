@@ -9,7 +9,7 @@ exports.register = function(server, options, next) {
   /* Required API endpoints */
   
   require('./api/health')(server);
-  require('./api/defaultModule')(server); 
+  require('./api/user')(server); 
  /* routesinject */
 
   next();

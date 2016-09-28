@@ -15,12 +15,12 @@ module.exports = {
 
   nodetraining200: {
     code: 'NODETRAINING200',
-    info: 'Resource successfully created'
+    info: 'Resource successfully retrieved'
   },
 
   nodetraining201: {
     code: 'NODETRAINING201',
-    info: 'Resource successfully modified'
+    info: 'Resource successfully added'
   },
 
   nodetraining202: {

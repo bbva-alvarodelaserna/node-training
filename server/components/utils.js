@@ -1,14 +1,13 @@
 'use strict';
 
-const uuid          = require('uuid');
-const GlobalModule  = require('./global');
-const Joi           = require('joi');
-const config        = require('../config/environment');
-const crypto        = require('crypto');
-const util          = require('util');
-let req             = require('request');
-let w               = require('winston');
-w.level             = config.loggerLevel;
+const uuid        = require('uuid');
+let GlobalModule  = require('./global');
+let Joi           = require('joi');
+const config      = require('../config/environment');
+const crypto      = require('crypto');
+let req           = require('request');
+let w             = require('winston');
+w.level           = config.loggerLevel;
 
 exports.getCollection = function(colName) {
   return GlobalModule.getConfigValue('db').collection(colName);
@@ -99,7 +98,7 @@ exports.validateSchema = function(data) {
   });
 };
 
-exports.log = log
+exports.log = log;
 
 function log(...params){
   console.log(params);

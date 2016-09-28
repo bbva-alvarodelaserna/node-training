@@ -26,24 +26,27 @@ gulp.task('start', ['apidoc', 'lint' , 'test' ], function () {
   });
 });
 
-
 gulp.task('apidoc', function() {
   return gulp.src('raml/api.raml')
     .pipe(raml2html())
     .pipe(gulp.dest('documentation'));
 });
-  
-
 
 gulp.task('pre-test', function () {
-  return gulp.src(['./server/**/*.js'])
+  return gulp.src([
+      './server/**/*.js',
+      '!./server/api/user/models/**/*',
+      '!./server/config/**/*',
+      '!./server/components/errors.js',
+      '!./server/components/global.js',
+      '!./server/components/responses.js'
+    ])
     .pipe(istanbul({
       instrumenter: isparta.Instrumenter,
       includeUntested: true
     }))
     .pipe(istanbul.hookRequire());
 });
-
 
 gulp.task('test', ['pre-test'], function() {
   var env = processEnv({_NODE_ENV: 'test'});
