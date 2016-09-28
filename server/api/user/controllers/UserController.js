@@ -32,24 +32,42 @@ exports.addUser = function(request, reply) {
   });
 };
 
-exports.getUsers = function(request, reply) {
+exports.getPatients = function(request, reply) {
   let data = {
-    logData : Utils.logData(request),
-    payload : request.query
+    logData : Utils.logData(request)
   };
   let response;
-  log('info', data.logData, 'UserController - getUsers Accessing');
+  log('info', data.logData, 'UserController - getPatients Accessing');
 
-  Utils.validateSchema(data)
-  .then(UserService.getUsers)
+  UserService.getPatients(data)
   .then((result) => {
-    response = Utils.createResponseData(Responses.nodetraining200, result);
-    log('info', data.logData, 'UserController - getUsers OK response', response);
+    response = Utils.createResponseData(Responses.nodetraining200, result.users);
+    log('info', data.logData, 'UserController - getPatients OK response', response);
     return reply(response).code(response.result.statusCode);
   })
   .catch((err) => {
     response = Errors.createGeneralError(err);
-    log('error', data.logData, 'UserController - getUsers KO - Error: ', response);
+    log('error', data.logData, 'UserController - getPatients KO - Error: ', response);
+    return reply(response).code(err.statusCode);
+  });
+};
+
+exports.getDoctors = function(request, reply) {
+  let data = {
+    logData : Utils.logData(request)
+  };
+  let response;
+  log('info', data.logData, 'UserController - getDoctors Accessing');
+
+  UserService.getDoctors(data)
+  .then((result) => {
+    response = Utils.createResponseData(Responses.nodetraining200, result.users);
+    log('info', data.logData, 'UserController - getDoctors OK response', response);
+    return reply(response).code(response.result.statusCode);
+  })
+  .catch((err) => {
+    response = Errors.createGeneralError(err);
+    log('error', data.logData, 'UserController - getDoctors KO - Error: ', response);
     return reply(response).code(err.statusCode);
   });
 };

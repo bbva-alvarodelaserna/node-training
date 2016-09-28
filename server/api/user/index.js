@@ -5,13 +5,24 @@ const UserController = require('./controllers/UserController');
 module.exports = function(server) {
   server.route({
     method: 'GET',
-    path: '/users',
+    path: '/users/patients',
     config: {
       auth: false,
       tags: ['api', 'users'],
-      description: 'Retrieves all users from the database'
+      description: 'Retrieves all patients from the database'
     },
-    handler: UserController.getUsers
+    handler: UserController.getPatients
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/users/doctors',
+    config: {
+      auth: false,
+      tags: ['api', 'users'],
+      description: 'Retrieves all doctors from the database'
+    },
+    handler: UserController.getDoctors
   });
 
   server.route({

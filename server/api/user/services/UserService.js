@@ -1,13 +1,20 @@
 'use strict';
 
-let Responses     = require('../../../components/responses');
-let Errors        = require('../../../components/errors');
 let Utils         = require('../../../components/utils');
 let PatientModel  = require('../models/PatientModel');
 let DoctorModel   = require('../models/DoctorModel');
 let MongoService  = require('../services/MongoService').getInstance();
 let log           = Utils.log;
 
+/**
+ * Adds a new user to the database based on its isDoctor parameter 
+ * @public
+ * @param {Object} data - Request object
+ * @param {Object} data.payload - Request payload
+ * @param {Boolean} data.payload.isDoctor - Specifies if user is doctor or patient
+ * @returns {Promise}
+ * @returns {Object} result - Operation acknowledgement
+ */
 exports.addUser = function(data) {
   return new Promise((resolve, reject) => {
     log('info', data.logData, 'UserService - addUser Accessing');
@@ -39,23 +46,59 @@ exports.addUser = function(data) {
   });
 };
 
-exports.getUsers = function(data) {
+/**
+ * Retrieves a list of patients from the database 
+ * @public
+ * @param {Object} data - Request object
+ * @returns {Promise}
+ * @returns {Object} data.users - Array of user documents
+ */
+exports.getPatients = function(data) {
   return new Promise((resolve, reject) => {
-    log('info', data.logData, 'UserService - getUsers Accessing');
+    log('info', data.logData, 'UserService - getPatients Accessing');
     MongoService.find(Object.assign(data, {
       query: {
-        collection: 'users',
+        collection: 'patients',
         query: {},
         options: { sort: { email: 1} }
       }
     }))
     .then((result) => {
       data.users = result;
-      log('info', data.logData, 'UserService | getUsers OK');
+      log('info', data.logData, 'UserService | getPatients OK');
       return resolve(data);
     })
     .catch((error) => {
-      log('error', data.logData, 'UserService | getUsers KO', error);
+      log('error', data.logData, 'UserService | getPatients KO', error);
+      return reject(error);
+    });
+  });
+};
+
+/**
+ * Retrieves a list of doctors from the database 
+ * @public
+ * @param {Object} data - Request object
+ * @returns {Promise}
+ * @returns {Object} data.users - Array of user documents
+ */
+exports.getDoctors = function(data) {
+  return new Promise((resolve, reject) => {
+    log('info', data.logData, 'UserService - getDoctors Accessing');
+    MongoService.find(Object.assign(data, {
+      query: {
+        collection: 'doctors',
+        query: {},
+        options: { sort: { email: 1} }
+      }
+    }))
+    .then((result) => {
+      data.users = result;
+      log('info', data.logData, 'UserService | getDoctors OK');
+      return resolve(data);
+    })
+    .catch((error) => {
+      log('error', data.logData, 'UserService | getDoctors KO', error);
       return reject(error);
     });
   });
