@@ -1,15 +1,19 @@
 'use strict';
-var crypto  = require('crypto');
-var uuid    = require('uuid');
-var config  = require('../../../config/environment');
 
-function DefaultModule(defaultModuleData) {
+const crypto  = require('crypto');
+const config  = require('../../../config/environment');
+const Utils   = require('../../../components/utils');
+
+function PatientModel (data) {
   return {
-    email           : defaultModuleData.name,
-    password        : crypto.createHash('sha256').update(defaultModuleData.password + config.salt, 'utf8').digest('base64'),
-    uuid            : uuid.v4(),
-    dateCreated     : new Date()
+    email           : data.email,
+    password        : crypto.createHash('sha256').update(data.password + config.salt, 'utf8').digest('base64'),
+    firstName 		: data.firstName,
+	lastName 		: data.lastName,
+    uuid            : Utils.generateUuid(),
+    dateCreated     : new Date(),
+    appointments 	: []
   };
 }
 
-module.exports = DefaultModule;
+module.exports = PatientModel;

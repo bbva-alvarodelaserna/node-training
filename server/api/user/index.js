@@ -14,4 +14,15 @@ module.exports = function(server) {
     handler: UserController.getUsers
   });
 
+  server.route({
+    method: 'POST',
+    path: '/users',
+    config: {
+      auth: false,
+      tags: ['api', 'users'],
+      description: 'Add a user to the database'
+    },
+    handler: UserController.addUser
+  });
+
 };

@@ -101,5 +101,9 @@ exports.validateSchema = function(data) {
 exports.log = log;
 
 function log(...params){
-  console.log(params);
+  let result = '';
+  params.forEach(param => {
+    result += `${param} `;
+  });
+  console.log(result);
 }

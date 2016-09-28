@@ -11,7 +11,7 @@ var all = {
   routes: {
     prefix: '/v1'
   },
-  salt: 'node-trainings4ltv4lu3'
+  salt: 'nodetrainings4ltv4lu3'
 };
 
 console.log('Runing in ', process.env._NODE_ENV, 'mode');
