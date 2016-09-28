@@ -22,7 +22,7 @@ exports.addUser = function(data) {
 
     MongoService.findAndModify(Object.assign(data, {
       query: {
-        collection: 'users',
+        collection: data.payload.isDoctor ? 'doctors':'patients',
         query: { email: dataModel.email },
         data: dataModel,
         options: { upsert: true, new: true }

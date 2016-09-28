@@ -11,10 +11,11 @@ let UserService   = require('../services/UserService');
 exports.addUser = function(request, reply) {
   let data = {
     logData : Utils.logData(request),
-    payload : request.query,
+    payload : request.payload,
     schema  : new UserModelValidator()
   };
   let response;
+
   log('info', data.logData, 'UserController - addUser Accessing');
 
   Utils.validateSchema(data)

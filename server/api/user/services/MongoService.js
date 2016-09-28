@@ -4,7 +4,7 @@ const GenericResponses = require('../../../components/responses');
 const Utils = require('../../../components/utils');
 const log = Utils.log;
 
-/** Class for managing database operations, using MongoDB driver for NodeJS. */
+/** Class for managing database operations, using MongoDB driver for Hapi. */
 class MongoService {
 
   /**

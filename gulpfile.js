@@ -7,6 +7,7 @@ var processEnv = require('gulp-process-env');
 var istanbul = require('gulp-istanbul');
 var isparta = require('isparta');
 var shell = require('gulp-shell');
+var jsdoc = require('gulp-jsdoc3');
 
 gulp.task('lint', function() {
   return gulp.src('./server/**/*.js')
@@ -14,7 +15,7 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('start', ['apidoc', 'lint' , 'test' ], function () {
+gulp.task('start', ['apidoc', 'techdoc', 'lint' , 'test' ], function () {
   nodemon({
     script: 'server/app.js',
     ext: 'js',
@@ -58,6 +59,11 @@ gulp.task('test', ['pre-test'], function() {
     }))
     // .pipe(istanbul.enforceThresholds({ thresholds: { global: 85 } }))
     .pipe(env.restore());
+});
+
+gulp.task('techdoc', function (cb) {
+  gulp.src(['README.md', './server/**/*.js'], {read: false})
+    .pipe(jsdoc(cb));
 });
 
 gulp.task('tests.watch', function () {

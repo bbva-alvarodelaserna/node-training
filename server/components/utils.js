@@ -103,7 +103,7 @@ exports.log = log;
 function log(...params){
   let result = '';
   params.forEach(param => {
-    result += `${param} `;
+    result += `${JSON.stringify(param)} `;
   });
   console.log(result);
 }
