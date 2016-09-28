@@ -16,6 +16,17 @@ module.exports = function(server) {
 
   server.route({
     method: 'GET',
+    path: '/users/patients/{doctorUuid}',
+    config: {
+      auth: false,
+      tags: ['api', 'users'],
+      description: 'Retrieves all patients from the database for a specific doctor'
+    },
+    handler: UserController.getPatientsForDoctor
+  });
+
+  server.route({
+    method: 'GET',
     path: '/users/doctors',
     config: {
       auth: false,
@@ -34,6 +45,17 @@ module.exports = function(server) {
       description: 'Add a user to the database'
     },
     handler: UserController.addUser
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/users/{userUuid}/appointment',
+    config: {
+      auth: false,
+      tags: ['api', 'users'],
+      description: 'Add an appointment to a user'
+    },
+    handler: UserController.addAppointmentToPatient
   });
 
 };

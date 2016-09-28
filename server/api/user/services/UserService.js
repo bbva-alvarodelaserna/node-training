@@ -47,6 +47,39 @@ exports.addUser = function(data) {
 };
 
 /**
+ * Adds a new appointment to a user
+ * @public
+ * @param {Object} data - Request object
+ * @param {Object} data.payload - Request payload
+ * @param {Object} data.params - Request parameters
+ * @param {Boolean} data.params.userUuid - Patient UUID
+ * @returns {Promise}
+ * @returns {Object} result - Operation acknowledgement
+ */
+exports.addAppointmentToPatient = function(data) {
+  return new Promise((resolve, reject) => {
+    log('info', data.logData, 'UserService - addAppointmentToPatient Accessing');
+    
+    MongoService.findAndModify(Object.assign(data, {
+      query: {
+        collection: 'patients',
+        query: { uuid: data.params.userUuid },
+        data: { $push: { appointments: data.payload } },
+        options: { new: false }
+      }
+    }))
+    .then((result) => {
+      log('info', data.logData, 'UserService | addAppointmentToPatient OK');
+      return resolve(result);
+    })
+    .catch((error) => {
+      log('error', data.logData, 'UserService | addAppointmentToPatient KO', error);
+      return reject(error);
+    });
+  });
+};
+
+/**
  * Retrieves a list of patients from the database 
  * @public
  * @param {Object} data - Request object
@@ -59,7 +92,7 @@ exports.getPatients = function(data) {
     MongoService.find(Object.assign(data, {
       query: {
         collection: 'patients',
-        query: {},
+        query: { },
         options: { sort: { email: 1} }
       }
     }))
@@ -70,6 +103,37 @@ exports.getPatients = function(data) {
     })
     .catch((error) => {
       log('error', data.logData, 'UserService | getPatients KO', error);
+      return reject(error);
+    });
+  });
+};
+
+/**
+ * Retrieves a list of patients from the database for a specific doctor 
+ * @public
+ * @param {Object} data - Request object
+ * @param {Object} data.params - Request parameters
+ * @param {Boolean} data.params.doctorUuid - Doctor UUID
+ * @returns {Promise}
+ * @returns {Object} data.users - Array of user documents
+ */
+exports.getPatientsForDoctor = function(data) {
+  return new Promise((resolve, reject) => {
+    log('info', data.logData, 'UserService - getPatientsForDoctor Accessing');
+    MongoService.find(Object.assign(data, {
+      query: {
+        collection: 'patients',
+        query: { 'appointments.doctorId': data.params.doctorUuid },
+        options: { sort: { email: 1} }
+      }
+    }))
+    .then((result) => {
+      data.users = result;
+      log('info', data.logData, 'UserService | getPatientsForDoctor OK');
+      return resolve(data);
+    })
+    .catch((error) => {
+      log('error', data.logData, 'UserService | getPatientsForDoctor KO', error);
       return reject(error);
     });
   });

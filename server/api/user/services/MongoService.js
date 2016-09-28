@@ -31,7 +31,7 @@ class MongoService {
     return new Promise((resolve, reject) => {
       let repository = this.getCollection(data.query.collection);
       if (data.query.options && data.query.options.sort) {
-        repository.find(data.query.query).sort(data.query.options.sort).toArray(function (err, result) {
+        repository.find(data.query.query, {_id: 0}).sort(data.query.options.sort).toArray(function (err, result) {
           if (err) {
             log('error', data.logData, 'MongoService | find - Internal DDBB Error');
             return reject(GenericResponses.internalDDBBError);
@@ -66,7 +66,7 @@ class MongoService {
     log('info', data.logData, 'MongoService | findOne');
     return new Promise((resolve, reject) => {
       let repository = this.getCollection(data.query.collection);
-      repository.findOne(data.query.query, function (err, result) {
+      repository.findOne(data.query.query, {_id: 0}, function (err, result) {
         if (err) {
           log('error', data.logData, 'MongoService | findOne - Internal DDBB Error');
           return reject(GenericResponses.internalDDBBError);
