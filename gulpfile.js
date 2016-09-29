@@ -36,7 +36,11 @@ gulp.task('apidoc', function() {
 gulp.task('pre-test', function () {
   return gulp.src([
       './server/**/*.js',
+      '!./server/app.js',
+      '!./server/routes.js',
       '!./server/api/user/models/**/*',
+      '!./server/api/**/index.js',
+      '!./server/api/health/healthResponses.js',
       '!./server/config/**/*',
       '!./server/components/errors.js',
       '!./server/components/global.js',
@@ -55,9 +59,10 @@ gulp.task('test', ['pre-test'], function() {
     .pipe(env)           // Sets the environment
     .pipe(jasmine())
     .pipe(istanbul.writeReports({
-      reporters: ['text', 'text-summary']
+      reporters: ['text', 'text-summary', 'html', 'cobertura'],
+      reportOpts: { dir: './coverage' }
     }))
-    // .pipe(istanbul.enforceThresholds({ thresholds: { global: 85 } }))
+    // .pipe(istanbul.enforceThresholds({ thresholds: { global: 75 } }))
     .pipe(env.restore());
 });
 

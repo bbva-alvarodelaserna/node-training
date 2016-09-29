@@ -58,4 +58,15 @@ module.exports = function(server) {
     handler: UserController.addAppointmentToPatient
   });
 
+  server.route({
+    method: 'DELETE',
+    path: '/users/{userUuid}/appointment/{appointmentUuid}',
+    config: {
+      auth: false,
+      tags: ['api', 'users'],
+      description: 'Add an appointment to a user'
+    },
+    handler: UserController.deleteAppointment
+  });
+
 };

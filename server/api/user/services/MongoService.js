@@ -1,8 +1,8 @@
 'use strict';
 
-const GenericResponses = require('../../../components/responses');
-const Utils = require('../../../components/utils');
-const log = Utils.log;
+let GenericResponses = require('../../../components/responses');
+let Utils = require('../../../components/utils');
+let log = Utils.log;
 
 /** Class for managing database operations, using MongoDB driver for Hapi. */
 class MongoService {

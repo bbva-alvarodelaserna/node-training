@@ -1,8 +1,10 @@
 'use strict';
 
 let Utils         = require('../../../components/utils');
+let Responses     = require('../../../components/responses');
 let PatientModel  = require('../models/PatientModel');
 let DoctorModel   = require('../models/DoctorModel');
+let AppointmentModel = require('../models/AppointmentModel');
 let MongoService  = require('../services/MongoService').getInstance();
 let log           = Utils.log;
 
@@ -27,17 +29,33 @@ exports.addUser = function(data) {
       log('info', data.logData, 'UserService - addUser - Patient');
     }
 
-    MongoService.findAndModify(Object.assign(data, {
+    MongoService.findOne(Object.assign(data, {
       query: {
         collection: data.payload.isDoctor ? 'doctors':'patients',
-        query: { email: dataModel.email },
-        data: dataModel,
-        options: { upsert: true, new: true }
+        query: { email: dataModel.email }
       }
     }))
-    .then((result) => {
-      log('info', data.logData, 'UserService | addUser OK');
-      return resolve(result);
+    .then((user) => {
+      if (user) {
+        return reject(Responses.nodetraining409);
+      } else {
+        MongoService.findAndModify(Object.assign(data, {
+          query: {
+            collection: data.payload.isDoctor ? 'doctors':'patients',
+            query: { email: dataModel.email },
+            data: dataModel,
+            options: { upsert: true, new: true }
+          }
+        }))
+        .then((result) => {
+          log('info', data.logData, 'UserService | addUser OK');
+          return resolve(result);
+        })
+        .catch((error) => {
+          log('error', data.logData, 'UserService | addUser KO', error);
+          return reject(error);
+        });
+      }
     })
     .catch((error) => {
       log('error', data.logData, 'UserService | addUser KO', error);
@@ -60,12 +78,13 @@ exports.addAppointmentToPatient = function(data) {
   return new Promise((resolve, reject) => {
     log('info', data.logData, 'UserService - addAppointmentToPatient Accessing');
     
+    let model = new AppointmentModel(data.payload);
     MongoService.findAndModify(Object.assign(data, {
       query: {
         collection: 'patients',
         query: { uuid: data.params.userUuid },
-        data: { $push: { appointments: data.payload } },
-        options: { new: false }
+        data: { $push: { appointments: model } },
+        options: { new: true }
       }
     }))
     .then((result) => {
@@ -74,6 +93,39 @@ exports.addAppointmentToPatient = function(data) {
     })
     .catch((error) => {
       log('error', data.logData, 'UserService | addAppointmentToPatient KO', error);
+      return reject(error);
+    });
+  });
+};
+
+/**
+ * Deletes an existing appointment from a user
+ * @public
+ * @param {Object} data - Request object
+ * @param {Object} data.params - Request parameters
+ * @param {Boolean} data.params.userUuid - Patient UUID
+ * @param {Boolean} data.params.appointmentUuid - Appointment UUID
+ * @returns {Promise}
+ * @returns {Object} result - Operation acknowledgement
+ */
+exports.deleteAppointment = function(data) {
+  return new Promise((resolve, reject) => {
+    log('info', data.logData, 'UserService - deleteAppointment Accessing');
+    
+    MongoService.findAndModify(Object.assign(data, {
+      query: {
+        collection: 'patients',
+        query: { uuid: data.params.userUuid },
+        data: { $pull: { appointments: { uuid: data.params.appointmentUuid } } },
+        options: { new: true }
+      }
+    }))
+    .then((result) => {
+      log('info', data.logData, 'UserService | deleteAppointment OK');
+      return resolve(result);
+    })
+    .catch((error) => {
+      log('error', data.logData, 'UserService | deleteAppointment KO', error);
       return reject(error);
     });
   });

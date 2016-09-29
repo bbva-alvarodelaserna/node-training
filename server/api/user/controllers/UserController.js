@@ -21,8 +21,8 @@ exports.addUser = function(request, reply) {
 
   Utils.validateSchema(data)
   .then(UserService.addUser)
-  .then(() => {
-    response = Utils.createResponseData(Responses.nodetraining201);
+  .then((result) => {
+    response = Utils.createResponseData(Responses.nodetraining201, {userUuid: result.uuid});
     log('info', data.logData, 'UserController - addUser OK response', response);
     return reply(response).code(response.result.statusCode);
   })
@@ -46,14 +46,35 @@ exports.addAppointmentToPatient = function(request, reply) {
 
   Utils.validateSchema(data)
   .then(UserService.addAppointmentToPatient)
-  .then(() => {
-    response = Utils.createResponseData(Responses.nodetraining201);
+  .then((result) => {
+    response = Utils.createResponseData(Responses.nodetraining201, { appointmentUuid: result.user.appointments[result.user.appointments.length -1 ].uuid });
     log('info', data.logData, 'UserController - addAppointmentToPatient OK response', response);
     return reply(response).code(response.result.statusCode);
   })
   .catch((err) => {
     response = Errors.createGeneralError(err);
     log('error', data.logData, 'UserController - addAppointmentToPatient KO - Error: ', response);
+    return reply(response).code(err.statusCode);
+  });
+};
+
+exports.deleteAppointment = function(request, reply) {
+  let data = {
+    logData: Utils.logData(request),
+    params: request.params
+  };
+  let response;
+  log('info', data.logData, 'UserController - deleteAppointment Accessing');
+
+  UserService.deleteAppointment(data)
+  .then(() => {
+    response = Utils.createResponseData(Responses.nodetraining000, { appointmentUuid: data.params.appointmentUuid });
+    log('info', data.logData, 'UserController - deleteAppointment OK response', response);
+    return reply(response).code(response.result.statusCode);
+  })
+  .catch((err) => {
+    response = Errors.createGeneralError(err);
+    log('error', data.logData, 'UserController - deleteAppointment KO - Error: ', response);
     return reply(response).code(err.statusCode);
   });
 };
