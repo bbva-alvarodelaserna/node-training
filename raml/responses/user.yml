@@ -1,0 +1,39 @@
+400:
+  description: Bad Request
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "statusCode": 400,
+            "code": "GEN500",
+            "message": "\"password\" is required"
+          }
+        }
+409:
+  description: User already exists
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "statusCode": 409,
+            "code": "NODETRAINING409",
+            "message": "User already exists"
+          }
+        }
+201:
+  description: User added - OK
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "code": "NODETRAINING201",
+            "statusCode": 201,
+            "message": "Resource successfully added"
+          },
+          "data": {
+            "userUuid": "1c616f74-171b-4e41-8e48-a2ec542e72b5"
+          }
+        }

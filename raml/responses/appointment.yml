@@ -1,0 +1,28 @@
+400:
+  description: Bad Request
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "statusCode": 400,
+            "code": "GEN500",
+            "message": "\"doctorId\" is required"
+          }
+        }
+
+201:
+  description: User added - OK
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "code": "NODETRAINING201",
+            "statusCode": 201,
+            "message": "Resource successfully added"
+          },
+          "data": {
+            "appointmentUuid": "e4467e79-02d8-4a38-ae5a-10bb96288f1f"
+          }
+        }

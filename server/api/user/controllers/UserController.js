@@ -22,7 +22,7 @@ exports.addUser = function(request, reply) {
   Utils.validateSchema(data)
   .then(UserService.addUser)
   .then((result) => {
-    response = Utils.createResponseData(Responses.nodetraining201, {userUuid: result.uuid});
+    response = Utils.createResponseData(Responses.nodetraining201, {userUuid: result.user.uuid});
     log('info', data.logData, 'UserController - addUser OK response', response);
     return reply(response).code(response.result.statusCode);
   })
@@ -74,6 +74,9 @@ exports.deleteAppointment = function(request, reply) {
   })
   .catch((err) => {
     response = Errors.createGeneralError(err);
+    if (err.statusCode === 400) {
+      response.message = 'Invalid appointment UUID';
+    }
     log('error', data.logData, 'UserController - deleteAppointment KO - Error: ', response);
     return reply(response).code(err.statusCode);
   });

@@ -33,7 +33,7 @@ describe('UserController functions', function () {
       getPatients: jasmine.createSpy('getPatients'),
       getDoctors: jasmine.createSpy('getDoctors')
     };
-    
+
     UserController.__set__('Utils', UtilsMock);
     UserController.__set__('log', UtilsMock.log);
     UserController.__set__('Responses', ResponsesMock);
@@ -56,7 +56,9 @@ describe('UserController functions', function () {
         }
       };
       mockResult = {
-        uuid: '123'
+        user: {
+          uuid: '123'
+        }
       };
     });
 
@@ -93,7 +95,7 @@ describe('UserController functions', function () {
       replyMock = jasmine.createSpy('reply').and.callFake(() => {
         return {
           code: function (statusCode) {
-            expect(UtilsMock.createResponseData).toHaveBeenCalledWith(ResponsesMock.nodetraining201, {userUuid: mockResult.uuid});
+            expect(UtilsMock.createResponseData).toHaveBeenCalledWith(ResponsesMock.nodetraining201, {userUuid: mockResult.user.uuid});
             done();
           }
         }

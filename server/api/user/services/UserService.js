@@ -9,7 +9,7 @@ let MongoService  = require('../services/MongoService').getInstance();
 let log           = Utils.log;
 
 /**
- * Adds a new user to the database based on its isDoctor parameter 
+ * Adds a new user to the database based on its isDoctor parameter
  * @public
  * @param {Object} data - Request object
  * @param {Object} data.payload - Request payload
@@ -77,7 +77,7 @@ exports.addUser = function(data) {
 exports.addAppointmentToPatient = function(data) {
   return new Promise((resolve, reject) => {
     log('info', data.logData, 'UserService - addAppointmentToPatient Accessing');
-    
+
     let model = new AppointmentModel(data.payload);
     MongoService.findAndModify(Object.assign(data, {
       query: {
@@ -111,18 +111,34 @@ exports.addAppointmentToPatient = function(data) {
 exports.deleteAppointment = function(data) {
   return new Promise((resolve, reject) => {
     log('info', data.logData, 'UserService - deleteAppointment Accessing');
-    
-    MongoService.findAndModify(Object.assign(data, {
+
+    MongoService.findOne(Object.assign(data, {
       query: {
         collection: 'patients',
-        query: { uuid: data.params.userUuid },
-        data: { $pull: { appointments: { uuid: data.params.appointmentUuid } } },
-        options: { new: true }
+        query: { 'appointments.uuid': data.params.appointmentUuid }
       }
     }))
     .then((result) => {
-      log('info', data.logData, 'UserService | deleteAppointment OK');
-      return resolve(result);
+      if (!result) {
+        return reject(Responses.nodetraining400);
+      } else {
+        MongoService.findAndModify(Object.assign(data, {
+          query: {
+            collection: 'patients',
+            query: { uuid: data.params.userUuid },
+            data: { $pull: { appointments: { uuid: data.params.appointmentUuid } } },
+            options: { new: true }
+          }
+        }))
+        .then((res) => {
+          log('info', data.logData, 'UserService | deleteAppointment OK');
+          return resolve(res);
+        })
+        .catch((error) => {
+          log('error', data.logData, 'UserService | deleteAppointment KO', error);
+          return reject(error);
+        });
+      }
     })
     .catch((error) => {
       log('error', data.logData, 'UserService | deleteAppointment KO', error);
@@ -132,7 +148,7 @@ exports.deleteAppointment = function(data) {
 };
 
 /**
- * Retrieves a list of patients from the database 
+ * Retrieves a list of patients from the database
  * @public
  * @param {Object} data - Request object
  * @returns {Promise}
@@ -161,7 +177,7 @@ exports.getPatients = function(data) {
 };
 
 /**
- * Retrieves a list of patients from the database for a specific doctor 
+ * Retrieves a list of patients from the database for a specific doctor
  * @public
  * @param {Object} data - Request object
  * @param {Object} data.params - Request parameters
@@ -192,7 +208,7 @@ exports.getPatientsForDoctor = function(data) {
 };
 
 /**
- * Retrieves a list of doctors from the database 
+ * Retrieves a list of doctors from the database
  * @public
  * @param {Object} data - Request object
  * @returns {Promise}

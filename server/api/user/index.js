@@ -64,7 +64,7 @@ module.exports = function(server) {
     config: {
       auth: false,
       tags: ['api', 'users'],
-      description: 'Add an appointment to a user'
+      description: 'Deletes an appointment from a user'
     },
     handler: UserController.deleteAppointment
   });

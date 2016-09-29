@@ -1,0 +1,29 @@
+400:
+  description: Bad Request
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "statusCode": 400,
+            "code": "NODETRAINING400",
+            "message": "Bad request"
+          },
+          "message": "Invalid appointment UUID"
+        }
+
+200:
+  description: User added - OK
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "code": "NODETRAINING200",
+            "statusCode": 200,
+            "message": "Resource successfully added"
+          },
+          "data": {
+            "appointmentUuid": "e4467e79-02d8-4a38-ae5a-10bb96288f1f"
+          }
+        }

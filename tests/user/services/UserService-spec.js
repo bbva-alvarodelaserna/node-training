@@ -14,7 +14,8 @@ describe('UserService functions', function () {
       log: jasmine.createSpy('log')
     };
     ResponsesMock = {
-      nodetraining409: 'nodetraining409'
+      nodetraining409: 'nodetraining409',
+      nodetraining400: 'nodetraining400'
     };
     mockModel = {
       email: 'foo.email'
@@ -27,7 +28,7 @@ describe('UserService functions', function () {
       findAndModify: jasmine.createSpy('findAndModify'),
       find: jasmine.createSpy('find')
     };
-    
+
     UserService.__set__('Utils', UtilsMock);
     UserService.__set__('log', UtilsMock.log);
     UserService.__set__('Responses', ResponsesMock);
@@ -277,7 +278,29 @@ describe('UserService functions', function () {
       };
     });
 
+    it('should reject promise if MongoService.findOne returns a null result', (done) => {
+      MongoServiceMock.findOne.and.callFake(() => {
+        return new Promise((resolve, reject) => {
+          resolve(null);
+        });
+      });
+
+      UserService.deleteAppointment(mockData)
+      .then((result) => {
+        done.fail('Promise should not have been resolved');
+      })
+      .catch((error) => {
+        expect(error).toEqual(ResponsesMock.nodetraining400);
+        done();
+      });
+    });
+
     it('should reject promise if MongoService.findAndModify fails', (done) => {
+      MongoServiceMock.findOne.and.callFake(() => {
+        return new Promise((resolve, reject) => {
+          resolve({uuid: '123'});
+        });
+      });
       MongoServiceMock.findAndModify.and.callFake(() => {
         return new Promise((resolve, reject) => {
           reject('error');
@@ -302,6 +325,11 @@ describe('UserService functions', function () {
           data: { $pull: { appointments: { uuid: mockData.params.appointmentUuid } } },
           options: { new: true }
         }
+      });
+      MongoServiceMock.findOne.and.callFake(() => {
+        return new Promise((resolve, reject) => {
+          resolve({uuid: '123'});
+        });
       });
       MongoServiceMock.findAndModify.and.callFake(() => {
         return new Promise((resolve, reject) => {

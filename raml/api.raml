@@ -5,16 +5,50 @@ version: v1
 baseUri: /{version}/
 
 schemas:
-  - auth: !include schemas/auth.json
+  - user: !include schemas/user.json
+  - appointment: !include schemas/appointment.json
 
 mediaType: application/json
 
-## Resource for Auth
-/auth:
-  description: User Authentication endpoint
+## Resource for Users
+/users:
+  description: Endpoint for adding users
   post:
-    description: Gets the jwt token for the user
+    description: Adds a new user to the database
     body:
-      schema: auth
-      example: !include schemas/examples/auth.json
-    responses: !include responses/auth.yml
+      schema: user
+      example: !include schemas/examples/user.json
+    responses: !include responses/user.yml
+
+  /doctors:
+    description: Endpoint for getting all doctors
+    get:
+      description: Retrieves all doctors from the database
+      responses: !include responses/doctors.yml
+
+  /patients:
+    description: Endpoint for getting all patients
+    get:
+      description: Retrieves all patients from the database
+      responses: !include responses/patients.yml
+
+    /{doctorUuid}:
+      description: Endpoint for getting all patients for a specific doctor
+      get:
+        description: Retrieves all patients from the database for a specific doctor
+        responses: !include responses/patientsForDoctor.yml
+
+  /{userUuid}/appointment:
+    description: Endpoint for adding an appointment to a user
+    post:
+      description: Adds a new appointment to the specified user.
+      body:
+        schema: appointment
+        example: !include schemas/examples/appointment.json
+      responses: !include responses/appointment.yml
+
+    /{appointmentUuid}:
+      description: Deletes an existing appointment.
+      delete:
+        description: Deletes an existing appointment from an existing user.
+        responses: !include responses/deletedAppointment.yml

@@ -1,0 +1,52 @@
+200:
+  description: Success - OK
+  body:
+    application/json:
+      example: |
+        {
+          "result": {
+            "code": "NODETRAINING200",
+            "statusCode": 200,
+            "message": "Resource successfully retrieved"
+          },
+          "data": [
+            {
+              "email": "foo@patient.com",
+              "password": "EcQB6meBlsJAsz1yGtrfVbSP0F8tmm+CCa1K3OufbVQ=",
+              "firstName": "Dan",
+              "lastName": "Brown",
+              "uuid": "e9a1645b-470f-44d0-ab83-ae3357d9b480",
+              "dateCreated": "2016-09-28T15:15:09.445Z",
+              "appointments": [
+                {
+                  "uuid": "17a04d8f-7f14-4c70-8ea3-5f8ae06b0f1a",
+                  "doctorId": "e9a1645b-470f-44d0-ab83-ae3357d9b480",
+                  "date": {
+                    "day": 12,
+                    "month": 1,
+                    "year": 2017
+                  }
+                }
+              ]
+            },
+            {
+              "email": "foo2@patient.com",
+              "password": "jfIsc+sOZYCwAX4LAujFoDkMaysf8g7cxEe7BZNSUlw=",
+              "firstName": "foo.firstName",
+              "lastName": "foo.lastName",
+              "uuid": "a6e1d090-bc04-413b-9f2f-5c198fec2fd6",
+              "dateCreated": "2016-09-29T14:05:42.359Z",
+              "appointments": [
+                {
+                  "uuid": "47a04d8f-7f14-4c70-8ea3-5f8ae06b0f6c",
+                  "doctorId": "e9a1645b-470f-44d0-ab83-ae3357d9b480",
+                  "date": {
+                    "day": 12,
+                    "month": 3,
+                    "year": 2017
+                  }
+                }
+              ]
+            }
+          ]
+        }

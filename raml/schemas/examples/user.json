@@ -1,0 +1,7 @@
+{
+  "email": "foo@email.com",
+  "password": "123456",
+  "firstName": "foo.firstName",
+  "lastName": "foo.lastName",
+  "isDoctor": true
+}

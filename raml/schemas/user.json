@@ -1,19 +1,28 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://jsonschema.net",
   "type": "object",
   "properties": {
     "email": {
-      "id": "http://jsonschema.net/email",
       "type": "string"
     },
     "password": {
-      "id": "http://jsonschema.net/password",
       "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "isDoctor": {
+      "type": "boolean"
     }
   },
   "required": [
     "email",
-    "password"
+    "password",
+    "firstName",
+    "lastName",
+    "isDoctor"
   ]
 }

@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "doctorId": {
+      "type": "string"
+    },
+    "date": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": "integer"
+        },
+        "month": {
+          "type": "integer"
+        },
+        "year": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "day",
+        "month",
+        "year"
+      ]
+    }
+  },
+  "required": [
+    "doctorId",
+    "date"
+  ]
+}
